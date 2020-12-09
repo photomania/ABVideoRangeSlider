@@ -60,10 +60,10 @@ open class ABTimeView: UIView {
     open override func layoutSubviews() {
         super.layoutSubviews()
         self.backgroundView.frame = self.bounds
-        self.timeLabel.frame = CGRect(x: marginLeft,
-                                      y: marginTop - self.timeLabel.bounds.height / 2,
-                                      width: self.frame.width - (marginRight + marginLeft),
-                                      height: self.frame.height - (marginBottom + marginTop))
+        self.timeLabel.frame = CGRect(x: 0,
+                                      y: 0,
+                                      width: self.frame.width,
+                                      height: self.frame.height)
     }
     
     required public init?(coder aDecoder: NSCoder) {
