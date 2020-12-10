@@ -28,5 +28,11 @@ class ABStartIndicator: UIView {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
+        let margin: CGFloat = 5
+        let area = self.bounds.insetBy(dx: -margin, dy: -margin)
+        return area.contains(point)
+    }
 
 }

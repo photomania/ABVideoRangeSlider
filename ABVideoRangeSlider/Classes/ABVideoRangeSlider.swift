@@ -398,25 +398,27 @@ public class ABVideoRangeSlider: UIView {
     
     @objc func viewDragged(recognizer: UIPanGestureRecognizer){
         let translation = recognizer.translation(in: self)
-        
+        print(translation)
         var progressPosition = positionFromValue(value: self.progressPercentage)
         var startPosition = positionFromValue(value: self.startPercentage)
         var endPosition = positionFromValue(value: self.endPercentage)
         
+        let oldStartPosition = startPosition
+        let oldEndPosition = endPosition
         startPosition = startPosition + translation.x
         endPosition = endPosition + translation.x
         progressPosition = progressPosition + translation.x
-        
+
         if startPosition < 0 {
             startPosition = 0
-            endPosition = endPosition - translation.x
-            progressPosition = progressPosition - translation.x
+            endPosition = endPosition - translation.x -  oldStartPosition
+            progressPosition = progressPosition - translation.x - oldStartPosition
         }
         
         if endPosition > self.frame.size.width{
             endPosition = self.frame.size.width
-            startPosition = startPosition - translation.x
-            progressPosition = progressPosition - translation.x
+            startPosition = startPosition - translation.x + (endPosition - oldEndPosition)
+            progressPosition = progressPosition - translation.x + (endPosition - oldEndPosition)
         }
         
         recognizer.setTranslation(CGPoint.zero, in: self)
@@ -462,6 +464,9 @@ public class ABVideoRangeSlider: UIView {
         startTimeView.timeLabel.text = self.secondsToFormattedString(totalSeconds: secondsFromValue(value: self.startPercentage))
         endTimeView.timeLabel.text = self.secondsToFormattedString(totalSeconds: secondsFromValue(value: self.endPercentage))
         
+//        print("self.startPercentage: \(self.startPercentage)")
+//        print("self.endPercentage: \(self.endPercentage)")
+//        print("Diff: \(self.endPercentage - self.startPercentage)")
         let startPosition = positionFromValue(value: self.startPercentage)
         let endPosition = positionFromValue(value: self.endPercentage)
         let progressPosition = positionFromValue(value: self.progressPercentage)
@@ -469,20 +474,22 @@ public class ABVideoRangeSlider: UIView {
         startIndicator.center = CGPoint(x: startPosition, y: startIndicator.center.y)
         endIndicator.center = CGPoint(x: endPosition, y: endIndicator.center.y)
         progressIndicator.center = CGPoint(x: progressPosition, y: progressIndicator.center.y)
+        let dragWidth = endIndicator.frame.origin.x - startIndicator.frame.origin.x - endIndicator.frame.size.width
+//        print("dragWidth: \(dragWidth)")
         draggableView.frame = CGRect(x: startIndicator.frame.origin.x + startIndicator.frame.size.width,
                                      y: 0,
-                                     width: endIndicator.frame.origin.x - startIndicator.frame.origin.x - endIndicator.frame.size.width,
+                                     width: dragWidth,
                                      height: self.frame.height)
 
         
         topLine.frame = CGRect(x: startIndicator.frame.origin.x + startIndicator.frame.width,
                                y: -topBorderHeight,
-                               width: endIndicator.frame.origin.x - startIndicator.frame.origin.x - endIndicator.frame.size.width,
+                               width: dragWidth,
                                height: topBorderHeight)
         
         bottomLine.frame = CGRect(x: startIndicator.frame.origin.x + startIndicator.frame.width,
                                   y: self.frame.size.height,
-                                  width: endIndicator.frame.origin.x - startIndicator.frame.origin.x - endIndicator.frame.size.width,
+                                  width: dragWidth,
                                   height: bottomBorderHeight)
         
         // Update time view
